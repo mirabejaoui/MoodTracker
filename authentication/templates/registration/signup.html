@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  {% include "registration/partials/_auth_aside.html" with heading="Start noticing how you feel." text="Log your mood in under a minute a day. Tag what matters, and let the patterns show up on their own." %}
+
+  <section class="card auth-card" aria-labelledby="auth-title">
+    <p class="eyebrow">Sign up</p>
+    <h1 id="auth-title" class="auth-title">Create your account</h1>
+    <p class="auth-lead">Already have one? <a href="{% url 'login' %}">Log in</a>.</p>
+
+    <form method="post" action="{% url 'signup' %}" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-error" role="alert"><p>{{ form.non_field_errors|join:" " }}</p></div>
+      {% endif %}
+
+      {% for field in form %}
+        {% include "registration/partials/_field.html" with field=field %}
+      {% endfor %}
+
+      <button type="submit" class="btn btn-primary btn-block">Create account</button>
+      <p class="form-help auth-fineprint">Your entries are private and only visible to you.</p>
+    </form>
+  </section>
+</div>
+{% endblock %}

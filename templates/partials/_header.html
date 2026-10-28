@@ -1,0 +1,49 @@
+{% with url_name=request.resolver_match.url_name %}
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{% url 'home' %}" aria-label="MoodTracker home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">MoodTracker</span>
+    </a>
+
+    {# {% if user.is_authenticated %} #}
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
+      <span class="sr-only">Toggle navigation</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary" data-nav>
+      <ul class="nav-list">
+        <li><a class="nav-link {% if url_name == 'home' %}is-active{% endif %}" href="{% url 'home' %}" {% if url_name == 'home' %}aria-current="page"{% endif %}>Dashboard</a></li>
+        <li><a class="nav-link {% if url_name == 'entry_list' %}is-active{% endif %}" href="{% url 'entry_list' %}" {% if url_name == 'entry_list' %}aria-current="page"{% endif %}>History</a></li>
+        <li><a class="nav-link {% if url_name == 'stats' %}is-active{% endif %}" href="{% url 'stats' %}" {% if url_name == 'stats' %}aria-current="page"{% endif %}>Statistics</a></li>
+        <li><a class="nav-link {% if url_name == 'tag_list' %}is-active{% endif %}" href="{% url 'tag_list' %}" {% if url_name == 'tag_list' %}aria-current="page"{% endif %}>Tags</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-primary btn-sm" href="{% url 'entry_create' %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Log mood
+        </a>
+
+        <div class="user-menu">
+          <a class="user-link {% if url_name == 'profile' %}is-active{% endif %}" href="{% url 'profile' %}" {% if url_name == 'profile' %}aria-current="page"{% endif %}>
+            <span class="avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+            <span class="user-name">{{ user.username }}</span>
+          </a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm">Log out</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    {# {% else %} #}
+    <div class="nav-actions nav-actions--guest">
+      <a class="btn btn-ghost btn-sm" href="{% url 'login' %}">Log in</a>
+      <a class="btn btn-primary btn-sm" href="{% url 'signup' %}">Sign up</a>
+    </div>
+    {# {% endif %} #}
+  </div>
+</header>
+{% endwith %}

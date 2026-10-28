@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Log in{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  {% include "registration/partials/_auth_aside.html" with heading="Welcome back." text="Take a minute to check in with yourself. Your history and patterns are waiting." %}
+
+  <section class="card auth-card" aria-labelledby="auth-title">
+    <p class="eyebrow">Log in</p>
+    <h1 id="auth-title" class="auth-title">Sign in to MoodTracker</h1>
+    <p class="auth-lead">Don&apos;t have an account? <a href="{% url 'signup' %}">Create one</a>.</p>
+
+    <form method="post" action="{% url 'login' %}" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-error" role="alert"><p>{{ form.non_field_errors|join:" " }}</p></div>
+      {% endif %}
+
+      {% include "registration/partials/_field.html" with field=form.username %}
+
+      <div class="form-group">
+        <div class="label-row">
+          <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+          <a class="label-link" href="#">Forgot password?</a>
+        </div>
+        {{ form.password }}
+        {% for error in form.password.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

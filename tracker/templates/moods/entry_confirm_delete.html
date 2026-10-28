@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Delete entry{% endblock %}
+
+{% block content %}
+<section class="card confirm-card" aria-labelledby="confirm-title">
+  <span class="mood-dot mood-{{ object.mood }}" aria-hidden="true"></span>
+  <h1 id="confirm-title">Delete this entry?</h1>
+  <p class="text-muted">Your {{ object.get_mood_display|lower }} entry from {{ object.date|date:"l, F j, Y" }} will be permanently removed. This can&rsquo;t be undone.</p>
+  <form method="post" class="confirm-actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete entry</button>
+    <a class="btn btn-secondary" href="{% url 'entry_update' object.pk %}">Keep it</a>
+  </form>
+</section>
+{% endblock %}

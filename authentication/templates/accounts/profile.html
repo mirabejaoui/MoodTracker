@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Your profile{% endblock %}
+
+{% block page_header %}
+<section class="page-header">
+  <p class="eyebrow">Account</p>
+  <h1 class="page-title">Your profile</h1>
+  <p class="page-lead">Manage your personal details and account settings.</p>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="profile-layout">
+  <aside class="card profile-card" aria-labelledby="profile-name">
+    <span class="avatar avatar-lg" aria-hidden="true">{{ user.username|first|upper }}</span>
+    <h2 id="profile-name" class="profile-name">{{ user.get_full_name|default:user.username }}</h2>
+    <p class="text-muted">@{{ user.username }}</p>
+
+    <dl class="profile-meta">
+      <div><dt>Email</dt><dd>{{ user.email|default:"Not set" }}</dd></div>
+      <div><dt>Member since</dt><dd>{{ user.date_joined|date:"F j, Y" }}</dd></div>
+    </dl>
+
+    <ul class="profile-stats">
+      <li><span class="stat-value">{{ entry_count|default:0 }}</span><span class="stat-label">Entries</span></li>
+      <li><span class="stat-value">{{ current_streak|default:0 }}</span><span class="stat-label">Day streak</span></li>
+      <li><span class="stat-value">{{ average_mood|default:"–" }}</span><span class="stat-label">Avg. mood</span></li>
+    </ul>
+  </aside>
+
+  <div class="profile-main">
+    <form method="post" class="card" novalidate aria-labelledby="details-title">
+      {% csrf_token %}
+      <h2 id="details-title" class="section-title">Personal details</h2>
+      <p class="card-text">This is how you appear in MoodTracker.</p>
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-error" role="alert"><p>{{ form.non_field_errors|join:" " }}</p></div>
+      {% endif %}
+
+      <div class="form-row form-row-2 profile-fields">
+        {% include "registration/partials/_field.html" with field=form.first_name %}
+        {% include "registration/partials/_field.html" with field=form.last_name %}
+      </div>
+      {% include "registration/partials/_field.html" with field=form.email %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+
+    <section class="card settings-row danger-zone" aria-labelledby="danger-title">
+      <div>
+        <h2 id="danger-title" class="section-title">Delete account</h2>
+        <p class="card-text">Permanently remove your account and all mood entries. This cannot be undone.</p>
+      </div>
+      <a class="btn btn-danger" href="{% url 'account_delete' %}">Delete account</a>
+    </section>
+  </div>
+</div>
+{% endblock %}

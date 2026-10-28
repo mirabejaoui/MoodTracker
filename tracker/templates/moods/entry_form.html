@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit entry{% else %}Log your mood{% endif %}{% endblock %}
+
+{% block page_header %}
+<section class="page-header">
+  <p class="eyebrow">{% if object %}{{ object.date|date:"l, F j" }}{% else %}{% now "l, F j" %}{% endif %}</p>
+  <h1 class="page-title">{% if object %}Edit this entry{% else %}How are you feeling?{% endif %}</h1>
+  <p class="page-lead">Pick the mood that fits best, rate how strong it feels, and add anything you want to remember.</p>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="form-layout">
+  <form method="post" class="card form-card" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error" role="alert">{{ form.non_field_errors|join:" " }}</div>
+    {% endif %}
+
+    <fieldset class="fieldset">
+      <legend>Mood</legend>
+      <div class="mood-picker">
+        {% for radio in form.mood %}{% if radio.data.value %}
+        <label class="mood-option" for="{{ radio.id_for_label }}">
+          {{ radio.tag }}
+          <span class="mood-dot mood-{{ radio.data.value }}" aria-hidden="true"></span>
+          <span>{{ radio.choice_label }}</span>
+        </label>
+        {% endif %}{% endfor %}
+      </div>
+      {% for error in form.mood.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+    </fieldset>
+
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.date.id_for_label }}">Date</label>
+        {{ form.date }}
+        {% for error in form.date.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.intensity.id_for_label }}">Intensity</label>
+        <div class="range-field">
+          <input class="range" type="range" min="1" max="10" step="1"
+                 id="{{ form.intensity.id_for_label }}" name="{{ form.intensity.html_name }}"
+                 value="{{ form.intensity.value|default:5 }}" data-range>
+          <output class="range-value" for="{{ form.intensity.id_for_label }}" data-range-output="{{ form.intensity.id_for_label }}">{{ form.intensity.value|default:5 }} / 10</output>
+        </div>
+        <div class="range-scale" aria-hidden="true"><span>Mild</span><span>Strong</span></div>
+        {% for error in form.intensity.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.note.id_for_label }}">Note <span class="text-muted">(optional)</span></label>
+      {{ form.note }}
+      <p class="form-help">What happened today? What influenced your mood?</p>
+      {% for error in form.note.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <fieldset class="fieldset">
+      <legend>Tags</legend>
+      <div class="chip-group">
+        {% for checkbox in form.tags %}
+        <label class="chip-option" for="{{ checkbox.id_for_label }}">
+          {{ checkbox.tag }}
+          <span>{{ checkbox.choice_label }}</span>
+        </label>
+        {% empty %}
+        <p class="form-help">No tags yet. <a href="{% url 'tag_list' %}">Create your first tag</a>.</p>
+        {% endfor %}
+      </div>
+      {% for error in form.tags.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{% if object %}Save changes{% else %}Save entry{% endif %}</button>
+      <a class="btn btn-ghost" href="{% url 'entry_list' %}">Cancel</a>
+      {% if object %}
+      <a class="btn btn-ghost btn-link-danger" href="{% url 'entry_delete' object.pk %}">Delete entry</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% include "moods/partials/_mood_scale.html" %}
+</div>
+{% endblock %}

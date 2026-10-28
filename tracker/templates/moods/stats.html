@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block page_header %}
+<section class="page-header page-header--split">
+  <div>
+    <p class="eyebrow">Insights</p>
+    <h1 class="page-title">Statistics</h1>
+    <p class="page-lead">A look at how you&rsquo;ve been feeling and what shapes your days.</p>
+  </div>
+  <nav class="segmented" aria-label="Period">
+    <a href="?period=week" {% if period == "week" %}aria-current="page"{% endif %}>Week</a>
+    <a href="?period=month" {% if period == "month" %}aria-current="page"{% endif %}>Month</a>
+    <a href="?period=year" {% if period == "year" %}aria-current="page"{% endif %}>Year</a>
+  </nav>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="grid grid-4" aria-label="Summary">
+  <article class="card stat-card">
+    <p class="stat-label">Entries</p>
+    <p class="stat-value">{{ total_entries }}</p>
+    <p class="stat-hint">check-ins this {{ period }}</p>
+  </article>
+  <article class="card stat-card">
+    <p class="stat-label">Average mood</p>
+    <p class="stat-value">{{ average_mood|floatformat:1|default:"–" }}<span class="stat-unit"> / 5</span></p>
+    <p class="stat-hint">across all entries</p>
+  </article>
+  <article class="card stat-card">
+    <p class="stat-label">Average intensity</p>
+    <p class="stat-value">{{ average_intensity|floatformat:1|default:"–" }}<span class="stat-unit"> / 10</span></p>
+    <p class="stat-hint">how strongly you felt it</p>
+  </article>
+  <article class="card stat-card">
+    <p class="stat-label">Current streak</p>
+    <p class="stat-value">{{ current_streak }}<span class="stat-unit"> day{{ current_streak|pluralize }}</span></p>
+    <p class="stat-hint">in a row with an entry</p>
+  </article>
+</section>
+
+<section class="card section" aria-labelledby="trend-title">
+  <div class="card-head">
+    <h2 id="trend-title">Mood trend</h2>
+    <p class="text-muted">Average mood per {% if period == "year" %}month{% else %}day{% endif %}</p>
+  </div>
+  <div class="bar-chart">
+    {% for point in trend %}
+    <div class="bar-col">
+      {% if point.avg_mood %}
+      <span class="bar mood-{{ point.avg_mood|floatformat:0 }}" style="--h: {% widthratio point.avg_mood 5 100 %}%" title="{{ point.label }}: {{ point.avg_mood|floatformat:1 }}"></span>
+      <span class="sr-only">{{ point.label }}: average mood {{ point.avg_mood|floatformat:1 }}</span>
+      {% else %}
+      <span class="bar is-empty"></span>
+      <span class="sr-only">{{ point.label }}: no entry</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="bar-labels" aria-hidden="true">
+    {% for point in trend %}<span>{{ point.label }}</span>{% endfor %}
+  </div>
+</section>
+
+<div class="grid grid-2 section">
+  <section class="card" aria-labelledby="dist-title">
+    <div class="card-head"><h2 id="dist-title">Mood distribution</h2></div>
+    <ul class="dist-list">
+      {% for item in distribution %}
+      <li class="dist-row">
+        <span class="dist-label"><span class="mood-dot mood-{{ item.value }}" aria-hidden="true"></span>{{ item.label }}</span>
+        <span class="dist-track" aria-hidden="true"><span class="dist-fill mood-{{ item.value }}" style="width: {% widthratio item.count total_entries|default:1 100 %}%"></span></span>
+        <span class="dist-count">{{ item.count }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card" aria-labelledby="tags-title">
+    <div class="card-head"><h2 id="tags-title">Top tags</h2></div>
+    {% if top_tags %}
+    <table class="data-table">
+      <thead>
+        <tr><th scope="col">Tag</th><th scope="col" class="num">Entries</th><th scope="col" class="num">Avg. mood</th></tr>
+      </thead>
+      <tbody>
+        {% for tag in top_tags %}
+        <tr>
+          <td><span class="tag">{{ tag.name }}</span></td>
+          <td class="num">{{ tag.count }}</td>
+          <td class="num"><span class="mood-dot mood-{{ tag.avg_mood|floatformat:0 }} dot-inline" aria-hidden="true"></span>{{ tag.avg_mood|floatformat:1 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">Add tags to your entries to see which activities lift your mood.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

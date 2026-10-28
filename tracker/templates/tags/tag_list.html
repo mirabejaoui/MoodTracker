@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Tags{% endblock %}
+{% block meta_description %}Organise your MoodTracker entries with simple, meaningful tags.{% endblock %}
+
+{% block page_header %}
+<header class="page-header page-header--split">
+  <div>
+    <p class="eyebrow">Organise your patterns</p>
+    <h1 class="page-title">Tags</h1>
+    <p class="page-lead">Create labels for the people, places and activities that shape your days.</p>
+  </div>
+  <div class="page-header-actions">
+    <a class="btn btn-primary" href="#new-tag">Add a tag</a>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="tags-layout" aria-label="Manage tags">
+  <div class="card tags-card">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Your library</p>
+        <h2 class="section-title">All tags</h2>
+      </div>
+      <span class="count-badge">{{ tags|length|default:"6" }} tags</span>
+    </div>
+
+    <div class="tag-list" role="list">
+      {% for tag in tags %}
+      <article class="tag-row" role="listitem">
+        <div class="tag-row-main">
+          <span class="tag tag--{{ forloop.counter|add:'2' }}">{{ tag.name }}</span>
+          <span class="tag-count">{{ tag.moodentry_set.count }} entries</span>
+        </div>
+        <div class="tag-row-actions">
+          <a class="text-button" href="#">Edit<span class="sr-only"> {{ tag.name }}</span></a>
+          <a class="text-button text-button--danger" href="#">Delete<span class="sr-only"> {{ tag.name }}</span></a>
+        </div>
+      </article>
+      {% empty %}
+      <div class="empty-state">
+        <span class="empty-state-icon" aria-hidden="true">#</span>
+        <h3>No tags yet</h3>
+        <p>Create your first tag to start spotting the context behind your moods.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <aside class="card tag-form-card" id="new-tag">
+    <p class="eyebrow">New label</p>
+    <h2 class="section-title">Add a tag</h2>
+    <p class="card-text">Keep it short and specific. You can add a tag to any mood entry later.</p>
+    <form method="post" class="tag-form">
+      {% csrf_token %}
+      {% include "registration/partials/_field.html" with field=form.name %}
+      <button class="btn btn-primary" type="submit">Create tag</button>
+    </form>
+    <div class="tag-examples">
+      <span class="form-help">Ideas</span>
+      <span class="tag">work</span>
+      <span class="tag">movement</span>
+      <span class="tag">family</span>
+    </div>
+  </aside>
+</section>
+{% endblock %}
+

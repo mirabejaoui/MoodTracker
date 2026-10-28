@@ -1,0 +1,12 @@
+{% if messages %}
+<div class="messages" role="status" aria-live="polite">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags|default:'info' }}" data-dismissible>
+    <p>{{ message }}</p>
+    <button type="button" class="alert-close" aria-label="Dismiss message" data-dismiss>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

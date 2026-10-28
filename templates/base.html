@@ -1,0 +1,37 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{% block meta_description %}MoodTracker — log your daily mood, add notes, and understand your emotional patterns over time.{% endblock %}">
+  <meta name="theme-color" content="#2f6f62">
+  <title>{% block title %}MoodTracker{% endblock %} · MoodTracker</title>
+
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  {% include "partials/_header.html" %}
+
+  <main id="main" class="site-main">
+    <div class="container">
+      {% include "partials/_messages.html" %}
+
+      {% block page_header %}{% endblock %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  {% include "partials/_footer.html" %}
+
+  <script src="{% static 'js/main.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

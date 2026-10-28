@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block page_header %}
+<section class="page-header">
+  <p class="eyebrow">{% now "l, F j" %}</p>
+  <h1 class="page-title">{% if user.is_authenticated %}How are you feeling today, {{ user.username }}?{% else %}How are you feeling today?{% endif %}</h1>
+  <p class="page-lead">Log your mood in a few seconds, add a note, and watch your patterns take shape over time.</p>
+  <div class="page-header-actions">
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary" href="{% url 'entry_create' %}">Log today&rsquo;s mood</a>
+    <a class="btn btn-secondary" href="{% url 'entry_list' %}">View history</a>
+    {% else %}
+    <a class="btn btn-primary" href="{% url 'signup' %}">Get started</a>
+    <a class="btn btn-secondary" href="{% url 'login' %}">I already have an account</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="grid grid-3" aria-label="Features">
+  <article class="card">
+    <span class="mood-dot mood-5" aria-hidden="true"></span>
+    <h2 class="card-title">Daily check-ins</h2>
+    <p class="card-text">Pick a mood, set its intensity from 1 to 10, and jot down what&rsquo;s on your mind.</p>
+  </article>
+  <article class="card">
+    <span class="mood-dot mood-3" aria-hidden="true"></span>
+    <h2 class="card-title">Tags that matter</h2>
+    <p class="card-text">Link entries to work, sport, family and more to see what lifts you up.</p>
+  </article>
+  <article class="card">
+    <span class="mood-dot mood-1" aria-hidden="true"></span>
+    <h2 class="card-title">Clear statistics</h2>
+    <p class="card-text">Review trends by week or month and spot patterns in your wellbeing.</p>
+  </article>
+</section>
+{% endblock %}
